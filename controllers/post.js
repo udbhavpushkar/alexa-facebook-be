@@ -24,4 +24,14 @@ const readPosts = async (req, res) => {
     }
 }
 
-module.exports = { createPost, readPosts }
+const deletePost = async (req, res) => {
+    try {
+        const id = req.params.id
+        let postsData = await Post.findByIdAndDelete(id)
+        res.status(200).json(postsData)
+    } catch (error) {
+        res.status(400).json({ message: error })
+    }
+}
+
+module.exports = { createPost, readPosts, deletePost }
