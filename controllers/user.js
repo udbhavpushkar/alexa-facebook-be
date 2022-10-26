@@ -1,5 +1,6 @@
 const User = require("../models/user")
 const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
 const registerUser = async (req, res) => {
     try {
@@ -43,10 +44,12 @@ const loginUser = async (req, res) => {
 
         const passwordCorrect = await bcrypt.compare(password, user.password)
         if (user && passwordCorrect) {
+            const token = generateToken(user._id)
             res.status(200).json({
                 id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                token
             })
         } else {
             throw "Wrong credentials"
@@ -58,6 +61,11 @@ const loginUser = async (req, res) => {
     } catch (error) {
         res.status(400).json({ messgae: error })
     }
+}
+
+const generateToken = (id) => {
+    let token = jwt.sign({ id: id }, "NEWTON")
+    return token
 }
 
 module.exports = { registerUser, loginUser }
